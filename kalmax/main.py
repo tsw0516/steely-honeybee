@@ -3,6 +3,9 @@
 # allocates them onto shelves while maximizing space utilization, and visualizes the arrangement
 # Tyler Walker - 2026-02-25
 
+import os
+from pathlib import Path
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import random
@@ -117,7 +120,11 @@ def visualize_shelves(shelves):
 # -------------------
 def main():
     # Load games
-    filepath = "data/games.xlsx"
+    default_path = Path(__file__).resolve().parent / "data" / "games.xlsx"
+    filepath = os.environ.get("GAMES_FILE", str(default_path))
+    filepath = str(Path(filepath).expanduser().resolve())
+    if not Path(filepath).exists():
+        raise FileNotFoundError(f"Games file not found: {filepath}")
     games = load_games_from_excel(filepath)
 
     # Sort by width descending, then height descending
